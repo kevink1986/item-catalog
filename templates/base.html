@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>My Udacity catalog app!</title>
+        <link href="https://fonts.googleapis.com/css?family=Lato:100,300" rel="stylesheet">
+        <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet" >
+        <!-- <link href="css/style.css" rel="stylesheet"> -->
+        <link href="{{ url_for('static', filename='css/jumbotron-narrow.css') }}" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    </head>
+    <body>
+        <div class="container">
+
+            <div class="header clearfix">
+                <nav>
+                    <ul class="nav nav-pills pull-right">
+                        {% if not user %}
+                            <li role="presentation" class="nav-link"><a href="/login">Login</a></li>
+                        {% else %}
+                            <li role="presentation" class="nav-link"><a href="/logout">Logout</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                <h3 class="text-muted"><a href="{{ url_for('showCatalog') }}">My Udacity catalog app!</a></h3>
+            </div>
+
+            {% if error%}
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <p class="bg-danger">{{error}}</p>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% block content%}
+            {% endblock %}
+
+            <footer>
+                <div class="row">
+                    <div class="col-md-12">
+                        <hr>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-3 text-center">
+                        <p>Copyright © 2017 Kevin Kriek</p>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+    </body>
+</html>
