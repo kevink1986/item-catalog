@@ -172,10 +172,26 @@ def gdisconnect():
         return response
 
 
+@app.route('/catalog.json')
+def catalogJSON():
+    categories = session.query(Category).all()
+    items = session.query(Item).all()
+    json = []
+    for c in categories:
+        category = c.serialize
+        item_list = []
+        for i in items:
+            if c.id == i.category_id:
+                item_list.append(i.serialize)
+        category['item'] = item_list
+        json.append(category)
+    return jsonify(Category= json)
+
+
 @app.route('/')
 @app.route('/catalog')
 def showCatalog():
-    #return "This is a catalog application"
+    #This is a catalog application"
     categories = session.query(Category).order_by(asc(Category.name)).all()
     items = session.query(Item).order_by(desc(Item.id)).limit(8)
     return render_template('catalog.html', categories=categories, items=items)
@@ -225,7 +241,7 @@ def showItem(category_name, item_name):
 @app.route('/catalog/<string:category_name>/<string:item_name>/edit', methods = ['GET', 'POST'])
 def editItem(category_name, item_name):
     if 'username' not in login_session:
-      return redirect('/login')
+        return redirect('/login')
     categories = session.query(Category).order_by(asc(Category.name)).all()
     item = session.query(Item).filter_by(name = item_name).one()
     if request.method == 'POST':
@@ -249,7 +265,7 @@ def editItem(category_name, item_name):
 @app.route('/catalog/<string:category_name>/<string:item_name>/delete', methods = ['GET', 'POST'])
 def deleteItem(category_name, item_name):
     if 'username' not in login_session:
-      return redirect('/login')
+        return redirect('/login')
     category = session.query(Category).filter_by(name = category_name).one()
     item = session.query(Item).filter_by(name = item_name).one()
     if request.method == 'POST':
