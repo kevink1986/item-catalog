@@ -37,7 +37,6 @@ def showLogin():
     return render_template('login.html', STATE=state)
 
 
-
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -181,6 +180,22 @@ def showCatalog():
     items = session.query(Item).order_by(desc(Item.id)).limit(8)
     return render_template('catalog.html', categories=categories, items=items)
 
+
+#Add a catalog item
+@app.route('/catalog/add', methods=['GET', 'POST'])
+def addItem():
+    if 'username' not in login_session:
+        return redirect('/login')
+    categories = session.query(Category).order_by(asc(Category.name)).all()
+    if request.method == 'POST':
+        item = Item(name = request.form['name'], description = request.form['description'], price = request.form['price'], category_id = request.form['category'])
+        session.add(item)
+        session.commit()
+        return redirect(url_for('showCatalog'))
+    else:
+        return render_template('additem.html', categories=categories)
+
+
 #Show a category of catalog items
 @app.route('/catalog/<string:category_name>/')
 @app.route('/catalog/<string:category_name>/items/')
@@ -195,12 +210,6 @@ def showCategory(category_name):
         return render_template('category.html', categories=categories, category=category, items=items, count=count)
 
 
-#Add a catalog item
-@app.route('/catalog/<string:category_name>/add')
-def addItem(category_name, item_name):
-    return "Add a new item to category %s" % category_name
-
-
 #Show a catalog item
 @app.route('/catalog/<string:category_name>/<string:item_name>/')
 def showItem(category_name, item_name):
@@ -209,19 +218,47 @@ def showItem(category_name, item_name):
     if not item:
         return redirect(url_for(showCategory), category_name = category_name)
     else:
-        return render_template('item.html', item=item)
+        return render_template('item.html', item=item, category=category)
 
 
 #Edit a catalog item
-@app.route('/catalog/<string:category_name>/<string:item_name>/edit')
+@app.route('/catalog/<string:category_name>/<string:item_name>/edit', methods = ['GET', 'POST'])
 def editItem(category_name, item_name):
-    return "Edit catalog item %s from category %s" % (item_name, category_name)
+    if 'username' not in login_session:
+      return redirect('/login')
+    categories = session.query(Category).order_by(asc(Category.name)).all()
+    item = session.query(Item).filter_by(name = item_name).one()
+    if request.method == 'POST':
+        if request.form['name']:
+            item.name = request.form['name']
+        if request.form['description']:
+            item.description = request.form['description']
+        if request.form['price']:
+            item.price = request.form['price']
+        if request.form['category']:
+            item.category_id = request.form['category']
+        session.add(item)
+        session.commit()
+        flash('Item Successfully Edited')
+        return redirect(url_for('showCategory', category_name = category_name))
+    else:
+        return render_template('edititem.html', item = item, categories = categories)
 
 
 #Delete a catalog item
-@app.route('/catalog/<string:category_name>/<string:item_name>/delete')
+@app.route('/catalog/<string:category_name>/<string:item_name>/delete', methods = ['GET', 'POST'])
 def deleteItem(category_name, item_name):
-    return "Delete catalog item %s from category %s" % (item_name, category_name)
+    if 'username' not in login_session:
+      return redirect('/login')
+    category = session.query(Category).filter_by(name = category_name).one()
+    item = session.query(Item).filter_by(name = item_name).one()
+    if request.method == 'POST':
+        session.delete(item)
+        session.commit()
+        flash('Item Successfully Deleted')
+        return redirect(url_for('showCategory', category_name = category_name))
+    else:
+        return render_template('deleteitem.html', item = item)
 
 
 # Disconnect based on provider
@@ -232,9 +269,6 @@ def disconnect():
             gdisconnect()
             del login_session['access_token']
             del login_session['gplus_id']
-        if login_session['provider'] == 'facebook':
-            fbdisconnect()
-            del login_session['facebook_id']
         del login_session['username']
         del login_session['email']
         del login_session['picture']
