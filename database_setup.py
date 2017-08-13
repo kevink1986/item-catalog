@@ -21,40 +21,39 @@ class Category(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
-    user_id = Column(Integer,ForeignKey('user.id'))
+    user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
 
     @property
     def serialize(self):
-       """Return object data in easily serializeable format"""
-       return {
-           'id'         : self.id,
-           'name'       : self.name
-       }
+        """Return object data in easily serializeable format"""
+        return {
+            'id': self.id,
+            'name': self.name
+        }
+
 
 class Item(Base):
     __tablename__ = 'item'
 
-    name =Column(String(80), nullable = False)
-    id = Column(Integer, primary_key = True)
+    name = Column(String(80), nullable=False)
+    id = Column(Integer, primary_key=True)
     description = Column(String(250))
     price = Column(String(8))
-    category_id = Column(Integer,ForeignKey('category.id'))
+    category_id = Column(Integer, ForeignKey('category.id'))
     category = relationship(Category)
-    user_id = Column(Integer,ForeignKey('user.id'))
+    user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
-
 
     @property
     def serialize(self):
-       """Return object data in easily serializeable format"""
-       return {
-            'cat_id'       : self.category_id,
-            'description'  : self.description,
-            'id'           : self.id,
-            'title'        : self.name
-       }
-
+        """Return object data in easily serializeable format"""
+        return {
+            'cat_id': self.category_id,
+            'description': self.description,
+            'id': self.id,
+            'title': self.name
+        }
 
 
 engine = create_engine('sqlite:///catalog.db')
