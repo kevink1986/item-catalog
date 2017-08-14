@@ -2,21 +2,21 @@
 {% block content %}
 
 <div class="row">
-    <div class="col-sm-4">
-    <h3>Categories</h3>
-    {% for c in categories %}
-
-        <p><a href="{{ url_for('showCategory', category_name = c.name) }}">{{c.name}}</a></p>
-
-    {% endfor %}
+    <div class="col-sm-4 sidebar-offcanvas" id="sidebar"">
+        <div class="list-group">
+            <h3 class="list-group-item">Categories</h3>
+            {% for c in categories %}
+                <a href="{{ url_for('showCategory', category_name = c.name) }}" class="list-group-item {% if c.id == category.id %}active{% endif %}">{{c.name}}</a>
+            {% endfor %}
+        </div>
     </div>
     <div class="col-sm-6">
     <h3>{{category.name}} items ({{count}} items)</h3>
+    <ul>
     {% for i in items %}
-
-        <p><a href="{{ url_for('showItem', category_name = i.category.name, item_name = i.name) }}">{{i.name}}</a></p>
-
+        <li><a href="{{ url_for('showItem', category_name = i.category.name, item_name = i.name) }}">{{i.name}}</a></li>
     {% endfor %}
+    </ul>
     </div>
 </div>
 

@@ -19,28 +19,25 @@
 
     </head>
     <body>
-        <div class="container">
 
-            <div class="header clearfix">
-                <nav>
-                    <ul class="nav nav-pills pull-right">
-                        {% if 'username' not in session %}
-                            <li role="presentation" class="nav-link"><a href="{{ url_for('showLogin') }}">Login</a></li>
-                        {% else %}
-                            <li role="presentation" class="nav-link"><a href="{{ url_for('disconnect') }}">Logout</a></li>
-                        {% endif %}
-                    </ul>
-                </nav>
-                <h3 class="text-muted"><a href="{{ url_for('showCatalog') }}">My Udacity catalog app!</a></h3>
-            </div>
-
-            {% if error%}
-                <div class="row">
-                    <div class="col-md-12 text-center">
-                        <p class="bg-danger">{{error}}</p>
-                    </div>
+        <nav class="navbar navbar-fixed-top navbar-inverse">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="{{ url_for('showCatalog') }}">
+                    My Udacity catalog app!
+                    </a>
                 </div>
-            {% endif %}
+                <div class="login-button">
+                {% if 'username' not in session %}
+                    <a type="button" class="btn btn-default navbar-btn" href="{{ url_for('showLogin') }}">Login</a>
+                {% else %}
+                    <a type="button" class="btn btn-default navbar-btn"  href="{{ url_for('disconnect') }}">Logout</a>
+                {% endif %}
+                </div>
+            </div>
+        </nav>
+
+        <div class="container">
 
             {% block content%}
             {% endblock %}
@@ -59,5 +56,6 @@
             </footer>
 
         </div>
+
     </body>
 </html>
