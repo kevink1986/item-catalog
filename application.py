@@ -209,11 +209,20 @@ def addItem():
         return redirect('/login')
     categories = session.query(Category).order_by(asc(Category.name)).all()
     if request.method == 'POST':
+        name = request.form['name']
+        description = request.form['description']
+        price = request.form['price']
+        category_id = request.form['category']
+        if session.query(Item).filter_by(
+            name=name,
+            category_id=category_id).one_or_none():
+            return render_template('additem.html',
+                error='Item already excists!')
         item = Item(
-            name=request.form['name'],
-            description=request.form['description'],
-            price=request.form['price'],
-            category_id=request.form['category'])
+            name=name,
+            description=description,
+            price=price,
+            category_id=category_id)
         session.add(item)
         session.commit()
         return redirect(url_for('showCatalog'))
