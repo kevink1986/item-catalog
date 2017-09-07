@@ -6,7 +6,7 @@
         <div class="list-group">
             <h3 class="list-group-item">Categories</h3>
             {% for c in categories %}
-                <a href="{{ url_for('showCategory', category_name = c.name) }}" class="list-group-item {% if c.id == category.id %}active{% endif %}">{{c.name}}</a>
+                <a href="{{ url_for('category.showCategory', category_name = c.name) }}" class="list-group-item {% if c.id == category.id %}active{% endif %}">{{c.name}}</a>
             {% endfor %}
         </div>
     </div>
@@ -14,7 +14,7 @@
     <h3>{{category.name}} items ({{count}} items)</h3>
     <ul>
     {% for i in items %}
-        <li><a href="{{ url_for('showItem', category_name = i.category.name, item_name = i.name) }}">{{i.name}}</a></li>
+        <li><a href="{{ url_for('item.showItem', category_name = i.category.name, item_name = i.name) }}">{{i.name}}</a></li>
     {% endfor %}
     </ul>
     </div>

@@ -23,15 +23,15 @@
         <nav class="navbar navbar-fixed-top navbar-inverse">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="{{ url_for('showCatalog') }}">
+                    <a class="navbar-brand" href="{{ url_for('home.showCatalog') }}">
                     My Udacity catalog app!
                     </a>
                 </div>
                 <div class="login-button">
                 {% if 'username' not in session %}
-                    <a type="button" class="btn btn-default navbar-btn" href="{{ url_for('showLogin') }}">Login</a>
+                    <a type="button" class="btn btn-default navbar-btn" href="{{ url_for('auth.showLogin') }}">Login</a>
                 {% else %}
-                    <a type="button" class="btn btn-default navbar-btn"  href="{{ url_for('disconnect') }}">Logout</a>
+                    <a type="button" class="btn btn-default navbar-btn"  href="{{ url_for('auth.disconnect') }}">Logout</a>
                 {% endif %}
                 </div>
             </div>

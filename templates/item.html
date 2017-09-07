@@ -6,7 +6,7 @@
     <h3>{{item.name}}</h3>
         <p>{{item.description}}</p>
         {% if 'username' in session %}
-        <p><a href="{{ url_for('editItem', item_name = item.name, category_name = category.name) }}">Edit</a> | <a href="{{ url_for('deleteItem', item_name = item.name, category_name = category.name) }}">Delete</a></p>
+        <p><a href="{{ url_for('item.editItem', item_name = item.name, category_name = category.name) }}">Edit</a> | <a href="{{ url_for('item.deleteItem', item_name = item.name, category_name = category.name) }}">Delete</a></p>
         {% endif %}
     </div>
 </div>
