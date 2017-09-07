@@ -24,6 +24,7 @@ CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())[
 # Create anti-forgery state token
 @auth.route('/login')
 def showLogin():
+    """Renders the login page with the current session state."""
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
     login_session['state'] = state
@@ -33,6 +34,9 @@ def showLogin():
 
 @auth.route('/gconnect', methods=['POST'])
 def gconnect():
+    """
+    Gathers data from Google Sign In API and places it inside a session variable.
+    """
     # Validate state token
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
@@ -123,6 +127,10 @@ def gconnect():
 
 
 def createUser(login_session):
+    """
+    Creates a new user based on the information from the user session info
+    and returns the user id.
+    """
     newUser = User(name=login_session['username'], email=login_session[
                    'email'], picture=login_session['picture'])
     session.add(newUser)
@@ -132,11 +140,13 @@ def createUser(login_session):
 
 
 def getUserInfo(user_id):
+    """Gets all the user info from the database based on the user id."""
     user = session.query(User).filter_by(id=user_id).one()
     return user
 
 
 def getUserID(email):
+    """Gets the user id by email address."""
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
@@ -146,7 +156,9 @@ def getUserID(email):
 
 @auth.route('/gdisconnect')
 def gdisconnect():
-    # Only disconnect a connected user.
+    """
+    Disconnects the google user from this application.
+    """
     access_token = login_session.get('access_token')
     if access_token is None:
         response = make_response(
@@ -169,9 +181,11 @@ def gdisconnect():
         return response
 
 
-# Disconnect based on provider
 @auth.route('/disconnect')
 def disconnect():
+    """
+    Deletes all the data of the user from the session variable
+    """
     if 'provider' in login_session:
         if login_session['provider'] == 'google':
             gdisconnect()

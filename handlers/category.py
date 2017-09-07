@@ -5,10 +5,14 @@ from database_session import *
 
 category = Blueprint('category', __name__)
 
-# Show a category of catalog items
+
 @category.route('/catalog/<string:category_name>/')
 @category.route('/catalog/<string:category_name>/items/')
 def showCategory(category_name):
+    """
+    Renders the category page for the selected category. The user is redirected
+    to the home page if the category doesn't exists.
+    """
     categories = session.query(Category).order_by(asc(Category.name)).all()
     if not any(c.name == category_name for c in categories):
         return redirect(url_for('home.showCatalog'))

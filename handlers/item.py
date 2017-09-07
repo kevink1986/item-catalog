@@ -7,9 +7,13 @@ from flask import session as login_session
 
 item = Blueprint('item', __name__)
 
-# Add a catalog item
+
 @item.route('/catalog/add', methods=['GET', 'POST'])
 def addItem():
+    """
+    Renders the add item page for users that are logged in and creates a new
+    Item in the database if a POST request comes in.
+    """
     if 'username' not in login_session:
         return redirect('/login')
     categories = session.query(Category).order_by(asc(Category.name)).all()
@@ -35,9 +39,9 @@ def addItem():
         return render_template('additem.html', categories=categories)
 
 
-# Show a catalog item
 @item.route('/catalog/<string:category_name>/<string:item_name>/')
 def showItem(category_name, item_name):
+    """Renders the item pag."""
     category = session.query(Category).filter_by(
         name=category_name).one_or_none()
     if not category:
@@ -50,13 +54,16 @@ def showItem(category_name, item_name):
         return render_template('item.html', item=item, category=category)
 
 
-# Edit a catalog item
 @item.route(
     '/catalog/<string:category_name>/<string:item_name>/edit',
     methods=[
         'GET',
         'POST'])
 def editItem(category_name, item_name):
+    """
+    Renders the edit item page for users that are logged in and edits the selected
+    item if a POST request comes in.
+    """
     if 'username' not in login_session:
         return redirect('/login')
     categories = session.query(Category).order_by(asc(Category.name)).all()
@@ -81,13 +88,16 @@ def editItem(category_name, item_name):
             categories=categories)
 
 
-# Delete a catalog item
 @item.route(
     '/catalog/<string:category_name>/<string:item_name>/delete',
     methods=[
         'GET',
         'POST'])
 def deleteItem(category_name, item_name):
+    """
+    Renders the delete item page for users that are logged in and deletes the
+    selected item if a POST request comes in.
+    """
     if 'username' not in login_session:
         return redirect('/login')
     category = session.query(Category).filter_by(name=category_name).one()
