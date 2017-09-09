@@ -4,18 +4,69 @@ from database_setup import Base, User, Category, Item
 from database_session import *
 
 from flask import session as login_session
+from functools import wraps
+
 
 item = Blueprint('item', __name__)
 
 
+def login_required(func):
+    """Wraper function that checks if users are logged in."""
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if 'username' not in login_session:
+            return redirect('/login')
+        else:
+            return func(*args, **kwargs)
+    return wrapper
+
+
+def item_exists(func):
+    """Wraper function that checks if an item exists in the database."""
+    @wraps(func)
+    def wrapper(category_name, item_name):
+        item = session.query(Item).filter_by(name=item_name).one_or_none()
+        if not item:
+            return redirect(url_for('home.showCatalog'))
+        else:
+            return func(category_name, item_name)
+    return wrapper
+
+
+def category_exists(func):
+    """Wraper function that checks if a category exists in the database."""
+    @wraps(func)
+    def wrapper(category_name, item_name):
+        category = session.query(Category).filter_by(
+            name=category_name).one_or_none()
+        if not category:
+            return redirect(url_for('home.showCatalog'))
+        else:
+            return func(category_name, item_name)
+    return wrapper
+
+
+def user_authorized(func):
+    """Wraper function that checks if users are allowed to edit/delete items."""
+    @wraps(func)
+    def wrapper(category_name, item_name):
+        item = session.query(Item).filter_by(name=item_name).one()
+        if item.user_id != login_session['user_id']:
+            flash('You can only edit or delete items you created yourself.')
+            return redirect(url_for('item.showItem', category_name=category_name, item_name=item_name))
+        else:
+            return func(category_name, item_name)
+    return wrapper
+
+
+
 @item.route('/catalog/add', methods=['GET', 'POST'])
+@login_required
 def addItem():
     """
     Renders the add item page for users that are logged in and creates a new
     Item in the database if a POST request comes in.
     """
-    if 'username' not in login_session:
-        return redirect('/login')
     categories = session.query(Category).order_by(asc(Category.name)).all()
     if request.method == 'POST':
         name = request.form['name']
@@ -31,7 +82,8 @@ def addItem():
             name=name,
             description=description,
             price=price,
-            category_id=category_id)
+            category_id=category_id,
+            user_id=login_session['user_id'])
         session.add(item)
         session.commit()
         return redirect(url_for('home.showCatalog'))
@@ -40,18 +92,15 @@ def addItem():
 
 
 @item.route('/catalog/<string:category_name>/<string:item_name>/')
+@item_exists
+@category_exists
 def showItem(category_name, item_name):
     """Renders the item pag."""
     category = session.query(Category).filter_by(
         name=category_name).one_or_none()
-    if not category:
-        return redirect(url_for('showCatalog'))
     item = session.query(Item).filter_by(
         name=item_name, category_id=category.id).one_or_none()
-    if not item:
-        return redirect(url_for('showCategory', category_name=category_name))
-    else:
-        return render_template('item.html', item=item, category=category)
+    return render_template('item.html', item=item, category=category)
 
 
 @item.route(
@@ -59,15 +108,18 @@ def showItem(category_name, item_name):
     methods=[
         'GET',
         'POST'])
+@item_exists
+@category_exists
+@login_required
+@user_authorized
 def editItem(category_name, item_name):
     """
     Renders the edit item page for users that are logged in and edits the selected
     item if a POST request comes in.
     """
-    if 'username' not in login_session:
-        return redirect('/login')
     categories = session.query(Category).order_by(asc(Category.name)).all()
     item = session.query(Item).filter_by(name=item_name).one()
+
     if request.method == 'POST':
         if request.form['name']:
             item.name = request.form['name']
@@ -93,15 +145,16 @@ def editItem(category_name, item_name):
     methods=[
         'GET',
         'POST'])
+@login_required
+@user_authorized
 def deleteItem(category_name, item_name):
     """
     Renders the delete item page for users that are logged in and deletes the
     selected item if a POST request comes in.
     """
-    if 'username' not in login_session:
-        return redirect('/login')
     category = session.query(Category).filter_by(name=category_name).one()
     item = session.query(Item).filter_by(name=item_name).one()
+
     if request.method == 'POST':
         session.delete(item)
         session.commit()

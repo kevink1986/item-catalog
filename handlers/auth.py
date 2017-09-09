@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 
 from database_setup import User
-
 from database_session import *
 
 from flask import session as login_session
@@ -24,7 +23,7 @@ CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())[
 # Create anti-forgery state token
 @auth.route('/login')
 def showLogin():
-    """Renders the login page with the current session state."""
+    """Renders the login page with the current session state token."""
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
     login_session['state'] = state
