@@ -5,6 +5,7 @@ from database_session import *
 
 home = Blueprint('home', __name__)
 
+
 @home.route('/')
 @home.route('/catalog')
 def showCatalog():

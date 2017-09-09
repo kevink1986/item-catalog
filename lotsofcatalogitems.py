@@ -20,8 +20,10 @@ session = DBSession()
 
 
 # Create dummy user
-User1 = User(name="Kevin Kriek", email="kevinkriek@gmail.com",
-             picture='https://pbs.twimg.com/profile_images/2671170543/18debd694829ed78203a5a36dd364160_400x400.png')
+User1 = User(
+    name="Kevin Kriek",
+    email="kevinkriek@gmail.com",
+    picture='https://pbs.twimg.com/profile_images/2671170543/18debd694829ed78203a5a36dd364160_400x400.png')
 session.add(User1)
 session.commit()
 
@@ -33,19 +35,19 @@ session.commit()
 
 
 item1 = Item(user_id=1, name="Shoes", description="Nike soccer shoes",
-                     price="$99.99", category=category1)
+             price="$99.99", category=category1)
 
 session.add(item1)
 session.commit()
 
 item2 = Item(user_id=1, name="Ball", description="Adidas soccer ball",
-                     price="$5.50", category=category1)
+             price="$5.50", category=category1)
 
 session.add(item2)
 session.commit()
 
 item3 = Item(user_id=1, name="T-shirt", description="Puma soccer shirt",
-                     price="$79.99", category=category1)
+             price="$79.99", category=category1)
 
 session.add(item3)
 session.commit()
@@ -59,18 +61,16 @@ session.commit()
 
 
 item1 = Item(user_id=2, name="Racket", description="Head tennis racket",
-                     price="$299.99", category=category2)
+             price="$299.99", category=category2)
 
 session.add(item1)
 session.commit()
 
 item2 = Item(user_id=2, name="Shorts", description="Robyn tennis short",
-                     price="$10.99", category=category2)
+             price="$10.99", category=category2)
 
 session.add(item2)
 session.commit()
-
-
 
 
 print "added catalog items!"

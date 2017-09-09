@@ -47,17 +47,22 @@ def category_exists(func):
 
 
 def user_authorized(func):
-    """Wraper function that checks if users are allowed to edit/delete items."""
+    """
+    Wraper function that checks if users are allowed to edit/delete items.
+    """
     @wraps(func)
     def wrapper(category_name, item_name):
         item = session.query(Item).filter_by(name=item_name).one()
         if item.user_id != login_session['user_id']:
             flash('You can only edit or delete items you created yourself.')
-            return redirect(url_for('item.showItem', category_name=category_name, item_name=item_name))
+            return redirect(
+                url_for(
+                    'item.showItem',
+                    category_name=category_name,
+                    item_name=item_name))
         else:
             return func(category_name, item_name)
     return wrapper
-
 
 
 @item.route('/catalog/add', methods=['GET', 'POST'])
@@ -74,10 +79,10 @@ def addItem():
         price = request.form['price']
         category_id = request.form['category']
         if session.query(Item).filter_by(
-            name=name,
-            category_id=category_id).one_or_none():
+                name=name,
+                category_id=category_id).one_or_none():
             return render_template('additem.html',
-                error='Item already excists!')
+                                   error='Item already excists!')
         item = Item(
             name=name,
             description=description,
@@ -114,8 +119,8 @@ def showItem(category_name, item_name):
 @user_authorized
 def editItem(category_name, item_name):
     """
-    Renders the edit item page for users that are logged in and edits the selected
-    item if a POST request comes in.
+    Renders the edit item page for users that are logged in and edits the
+    selected item if a POST request comes in.
     """
     categories = session.query(Category).order_by(asc(Category.name)).all()
     item = session.query(Item).filter_by(name=item_name).one()
@@ -132,7 +137,10 @@ def editItem(category_name, item_name):
         session.add(item)
         session.commit()
         flash('Item Successfully Edited')
-        return redirect(url_for('category.showCategory', category_name=category_name))
+        return redirect(
+            url_for(
+                'category.showCategory',
+                category_name=category_name))
     else:
         return render_template(
             'edititem.html',
@@ -159,6 +167,9 @@ def deleteItem(category_name, item_name):
         session.delete(item)
         session.commit()
         flash('Item Successfully Deleted')
-        return redirect(url_for('category.showCategory', category_name=category_name))
+        return redirect(
+            url_for(
+                'category.showCategory',
+                category_name=category_name))
     else:
         return render_template('deleteitem.html', item=item)

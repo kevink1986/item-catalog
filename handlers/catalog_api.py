@@ -35,11 +35,13 @@ def categoryJSON(category_name):
     return jsonify(Items=[i.serialize for i in items])
 
 
-@catalog_api.route('/catalog/<string:category_name>/<string:item_name>/item.json')
+@catalog_api.route(
+    '/catalog/<string:category_name>/<string:item_name>/item.json')
 def itemJSON(category_name, item_name):
     """
     Returns a json file with the details about the selected catalog item.
     """
     category = session.query(Category).filter_by(name=category_name).one()
-    item = session.query(Item).filter_by(name=item_name, category_id=category.id).one()
+    item = session.query(Item).filter_by(
+        name=item_name, category_id=category.id).one()
     return jsonify(Item=item.serialize)

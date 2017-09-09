@@ -21,6 +21,8 @@ CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())[
     'web']['client_id']
 
 # Create anti-forgery state token
+
+
 @auth.route('/login')
 def showLogin():
     """Renders the login page with the current session state token."""
