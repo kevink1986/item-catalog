@@ -58,13 +58,13 @@ session.add(category1)
 session.commit()
 
 
-item1 = Item(user_id=1, name="Racket", description="Head tennis racket",
+item1 = Item(user_id=2, name="Racket", description="Head tennis racket",
                      price="$299.99", category=category2)
 
 session.add(item1)
 session.commit()
 
-item2 = Item(user_id=1, name="Shorts", description="Robyn tennis short",
+item2 = Item(user_id=2, name="Shorts", description="Robyn tennis short",
                      price="$10.99", category=category2)
 
 session.add(item2)

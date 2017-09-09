@@ -7,7 +7,7 @@ Base = declarative_base()
 
 
 class User(Base):
-    """docstring for User"""
+    """Database object with user information"""
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True)
@@ -17,6 +17,7 @@ class User(Base):
 
 
 class Category(Base):
+    """Database object with infomation about a catalog category"""
     __tablename__ = 'category'
 
     id = Column(Integer, primary_key=True)
@@ -34,6 +35,7 @@ class Category(Base):
 
 
 class Item(Base):
+    """Database object with information about a catalog item"""
     __tablename__ = 'item'
 
     name = Column(String(80), nullable=False)
